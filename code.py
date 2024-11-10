@@ -1,4 +1,3 @@
-# import everything
 import telegram
 import logging
 
@@ -22,8 +21,6 @@ bot = telegram.Bot(token="TOKEN HERE")
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
-
-# set higher logging level for httpx to avoid all GET and POST requests being logged
 logging.getLogger("httpx").setLevel(logging.ERROR)
 
 logger = logging.getLogger(__name__)
@@ -34,10 +31,10 @@ async def post_init(application: Application) -> None:
     await application.bot.set_my_commands([('start', 'Starts the bot')])
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    reply_keyboard = [["Request GO/ Split"]]
+    reply_keyboard = [["Request GO/ Split"]] #This is the button click thingy you see when you start the bot
 
     await update.message.reply_text(
-        "Hi! I am a Toya Cube. "
+        "Hi! I am [BOT NAME]. " #Replace this anyway you want
         "What would you like to do today? \n"
         "If doing requests with this bot, any request without your @/username will be ignored."
         ,
@@ -50,7 +47,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 async def link(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """asks for link"""
+    #Get link
     user = update.message.from_user
     logger.info("Request of %s: %s", user.first_name, update.message.text)
     print(update.message.text)
@@ -63,6 +60,7 @@ async def link(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return LINK
 
 async def notes(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    #Get username + any additional requests from buyer themselves + saving the link from the previous message
     user = update.message.from_user
     global itemlink
     itemlink = update.message.text
@@ -78,16 +76,19 @@ async def notes(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 async def bio(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    #Saves the username + notes
     user = update.message.from_user
     global detail
     detail =  update.message.text
     print(detail)
     logger.info("Bio of %s: %s", user.first_name, update.message.text)
     print(detail)
-    print(itemlink)
+    print(itemlink) #debugging purposes
     await update.message.reply_text(f'''Request stored in the cube. Thank you! Here's the summary of your request:\n\n
-Item: {itemlink} \nDetail: {detail}'''
+Item: {itemlink} \nDetail: {detail}''' #itemlink and detail are the string variables defined + saved earlier
                                     )
+    #This sends the details to a dedicated group chat with me and the bot; if using channel its probably the same + just needs admin setup for the bot
+    #See the send function
     await send(f'''Item: {itemlink} \nDetail: {detail}''',[CHAT ID])
     return ConversationHandler.END
 
@@ -103,6 +104,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return ConversationHandler.END
 
 async def send(msg, chat_id, token="TOKEN"):
+    #Function for sending the details
     bot = telegram.Bot(token=token)
     bot.initialize
     await bot.sendMessage(chat_id=chat_id, text=msg)
@@ -115,6 +117,7 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return ConversationHandler.END
 
 def main() -> None:
+    #Everything related to the bot functioning; bot will not work if this is removed
     application = Application.builder().token("TOKEN").post_init(post_init).build()
 
     conv_handler = ConversationHandler(
