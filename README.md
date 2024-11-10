@@ -13,7 +13,7 @@ Please remember to replace `"TOKEN"` and `"bot_name"` with your own; do not reve
 To send split requests to a dedicated channel, replace `[CHAT ID]` with the ID of your chat. You can obtain this ID using this bot @MissRose_bot
 
 ## Features
-1. Systematic way of receiving and viewingsplit requests from buyers
+1. Systematic way of receiving and viewing split requests from buyers
 2. The bot self organises those details and sends them to a dedicated group chat or channel
 
 If you want to add additional features to your bot the main pieces of code are really quite copy-paste. But if you want 
